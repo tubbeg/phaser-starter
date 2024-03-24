@@ -1,0 +1,20 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ []
+
+ 
+ :dev-http {3000 "public"}
+
+:builds
+ {:app
+  {:target :browser
+
+   :output-dir "public/js"
+   :asset-path "/js"
+   :release {:compiler-options {:optimizations :advanced}}
+   :modules {:main {:init-fn phaser.core/initFn}}}}}

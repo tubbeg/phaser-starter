@@ -1,0 +1,18 @@
+{
+  "name": "phaser-starter",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "shadow-cljs": "2.27.5"
+  },
+  "scripts": {
+    "repl": "npx shadow-cljs browser-repl",
+    "watch": "npx shadow-cljs watch app",
+    "release": "npx shadow-cljs release app",
+    "compile": "npx shadow-cljs compile app",
+    "killjava": "killall -9 java"
+  },
+  "dependencies": {
+    "phaser": "^3.80.1"
+  }
+}
