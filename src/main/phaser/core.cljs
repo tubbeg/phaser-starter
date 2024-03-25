@@ -27,7 +27,6 @@
 (set! (.. SceneExtension -prototype -constructor)
       SceneExtension)
 
-
 ; --------------------
 
 (set!
@@ -55,25 +54,69 @@
 (def particle-setting
   #js {:speed 100 :scale scale :blendMode "ADD"})
 
-(set! *warn-on-infer* false) ;disables type inference warning
+(set! *warn-on-infer* true) ;disables type inference warning if false
+
+(comment
+
+  "I decided to include just a couple of tips for cljs since
+   you are probably going to need this in the future.")
+
+(comment "
+   Tip 1:
+
+   Add ^:export for functions that will be used by vanilla
+   js functions.
+
+   Example below:
+   ")
+
+(defn ^:export add-two [number]
+  (+ number 2))
+
+(comment "Call the function using phaser.core.add_two(myNumber) in js.")
+
+(comment "
+   Tip 2:
+  
+   Add a typehint using ^js
+          
+   Example:
+          (defn my-func [x]
+          (.jsfunc ^js x))
+   ")
+
+
+(comment
+  "
+   Tip 3:
+
+   Add an externs file.
+
+   Update your shadow-cljs.edn compiler options to include
+   a path to an externs file.
+
+   This project includes a particle.js externs file from src/externs which
+   is necessary for adding particles.
+
+   The Closure compiler doesn't always understand when certain names should
+   be minified or not
+   ")
+
 
 (defn sceneCreate []
   (this-as this
-           (. (. this -add) image 400 300 "sky") ; this step has to be done before
-           (let [add (. this -add)
-                 physics (. this -physics)
-                 add-physics (. physics -add)
-                     ;----
-                 p (. add particles 0 0 "red" particle-setting)
-
-                     ; above causes a warning
-                 logo (. add-physics image 400 100 "logo")]
-             (println "Loading textures")
-                 ;(. add image 400 300 "logo")
+           (println "Loading textures")
+           ; this step below has to be done before the let
+           (. (. this -add) image 400 300 "sky")
+           (let [p (.. this -add (particles 0 0 "red" particle-setting))
+                 ; this step above requires an externs file for
+                 ; release/production!!
+                 ; see src/externs/particle.js!
+                 logo (.. this -physics -add (image 400 100 "logo"))]
              (. logo setVelocity 100 200)
              (. logo setBounce 1 1)
              (. logo setCollideWorldBounds true)
-             (. p startFollow logo))))
+             (. p  (startFollow  logo)))))
 
 
 (set! (.. SceneExtension -prototype -create) sceneCreate)
@@ -86,6 +129,8 @@
                    :height 600
                    :scene SceneExtension
                    :physics physics})
+
+
 
 (defn initFn []
   (println "Starting game...")
